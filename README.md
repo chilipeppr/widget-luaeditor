@@ -28,17 +28,21 @@ Javascript. Then you use cprequire() to find your widget's Javascript and get
 back the instance of it.
 
 ```javascript
+// Inject new div to contain widget or use an existing div with an ID
+$("body").append('<' + 'div id="myDivWidgetLuaeditor"><' + '/div>');
+
 chilipeppr.load(
-  "#myDivWidgetInsertedInto",
+  "#myDivWidgetLuaeditor",
   "http://raw.githubusercontent.com/chilipeppr/widget-luaeditor/master/auto-generated-widget.html",
   function() {
-    // Callback after widget loaded into #myDivWidgetInsertedInto
+    // Callback after widget loaded into #myDivWidgetLuaeditor
+    // Now use require.js to get reference to instantiated widget
     cprequire(
-      "inline:com-chilipeppr-widget-luaeditor", // the id you gave your widget
-      function(mywidget) {
-        // Callback that is passed reference to your newly loaded widget
-        console.log("My widget just got loaded.", mywidget);
-        mywidget.init();
+      ["inline:com-chilipeppr-widget-luaeditor"], // the id you gave your widget
+      function(myObjWidgetLuaeditor) {
+        // Callback that is passed reference to the newly loaded widget
+        console.log("Widget / Lua Editor just got loaded.", myObjWidgetLuaeditor);
+        myObjWidgetLuaeditor.init();
       }
     );
   }
@@ -52,120 +56,100 @@ This widget/element publishes the following signals. These signals are owned by 
 chilipeppr.subscribe(signal, callback) method. 
 To better understand how ChiliPeppr's subscribe() method works see amplify.js's documentation at http://amplifyjs.com/api/pubsub/
 
-| Signal | Description |
-| ------ | ----------- |
-| (No signals defined in this widget/element) |
+  <table id="com-chilipeppr-elem-pubsubviewer-pub" class="table table-bordered table-striped">
+      <thead>
+          <tr>
+              <th style="">Signal</th>
+              <th style="">Description</th>
+          </tr>
+      </thead>
+      <tbody>
+      <tr><td colspan="2">(No signals defined in this widget/element)</td></tr>    
+      </tbody>
+  </table>
 
 ## Subscribe
 
 This widget/element subscribes to the following signals. These signals are owned by this widget/element. Other objects inside the ChiliPeppr environment can publish to these signals via the chilipeppr.publish(signal, data) method. 
 To better understand how ChiliPeppr's publish() method works see amplify.js's documentation at http://amplifyjs.com/api/pubsub/
 
-| Signal | Description |
-| ------ | ----------- |
-| /com-chilipeppr-widget-luaeditor/loadScript | Publish an object of {name:"myfile.lua", content:"print(\"hello world\")"} and we will open a new tab with the contents of the file. |
+  <table id="com-chilipeppr-elem-pubsubviewer-sub" class="table table-bordered table-striped">
+      <thead>
+          <tr>
+              <th style="">Signal</th>
+              <th style="">Description</th>
+          </tr>
+      </thead>
+      <tbody>
+      <tr valign="top"><td>/com-chilipeppr-widget-luaeditor/loadScript</td><td>Publish an object of {name:"myfile.lua", content:"print(\"hello world\")"} and we will open a new tab with the contents of the file.</td></tr>    
+      </tbody>
+  </table>
 
 ## Foreign Publish
 
 This widget/element publishes to the following signals that are owned by other objects. 
 To better understand how ChiliPeppr's subscribe() method works see amplify.js's documentation at http://amplifyjs.com/api/pubsub/
 
-| Signal | Description |
-| ------ | ----------- |
-| (No signals defined in this widget/element) |
+  <table id="com-chilipeppr-elem-pubsubviewer-foreignpub" class="table table-bordered table-striped">
+      <thead>
+          <tr>
+              <th style="">Signal</th>
+              <th style="">Description</th>
+          </tr>
+      </thead>
+      <tbody>
+      <tr><td colspan="2">(No signals defined in this widget/element)</td></tr>    
+      </tbody>
+  </table>
 
 ## Foreign Subscribe
 
 This widget/element publishes to the following signals that are owned by other objects.
 To better understand how ChiliPeppr's publish() method works see amplify.js's documentation at http://amplifyjs.com/api/pubsub/
 
-| Signal | Description |
-| ------ | ----------- |
-| (No signals defined in this widget/element) |
+  <table id="com-chilipeppr-elem-pubsubviewer-foreignsub" class="table table-bordered table-striped">
+      <thead>
+          <tr>
+              <th style="">Signal</th>
+              <th style="">Description</th>
+          </tr>
+      </thead>
+      <tbody>
+      <tr><td colspan="2">(No signals defined in this widget/element)</td></tr>    
+      </tbody>
+  </table>
 
 ## Methods / Properties
 
 The table below shows, in order, the methods and properties inside the widget/element.
 
-| Item                  | Type          | Description |
-| -------------         | ------------- | ----------- |
-| id | string | "com-chilipeppr-widget-luaeditor"<br><br>The ID of the widget. You must define this and make it unique. |
-| name | string | "Widget / Lua Editor" |
-| desc | string | "Edit and run Lua code with a multi-file editor. Save locally or upload/run remotely on the Lua device." |
-| url | string | "http://raw.githubusercontent.com/chilipeppr/widget-luaeditor/master/auto-generated-widget.html" |
-| fiddleurl | string | "http://ide.c9.io/chilipeppr/widget-luaeditor" |
-| githuburl | string | "http://github.com/chilipeppr/widget-luaeditor" |
-| testurl | string | "http://widget-luaeditor-chilipeppr.c9users.io/widget.html" |
-| publish | object | Please see docs above.<br><br>Define the publish signals that this widget/element owns or defines so thatother widgets know how to subscribe to them and what they do. |
-| subscribe | object | Please see docs above.<br><br>Define the subscribe signals that this widget/element owns or defines so thatother widgets know how to subscribe to them and what they do. |
-| foreignPublish | object | Please see docs above.<br><br>Document the foreign publish signals, i.e. signals owned by other widgetsor elements, that this widget/element publishes to. |
-| foreignSubscribe | object | Please see docs above.<br><br>Document the foreign subscribe signals, i.e. signals owned by other widgetsor elements, that this widget/element subscribes to. |
-| jscript | object |  |
-| editor | object |  |
-| init | function | function ()  |
-| setupSubscribe | function | function () <br><br>Setup subscribe so others can publish to us and ask us toopen a file, i.e. the NodeMCU Files widget sends this to us. |
-| loadScript | function | function (data) <br><br>The method that receives the /loadScript publishes |
-| loadPrevFiles | function | function ()  |
-| getDeviceFileList | function | function ()  |
-| aceId | string | "com-chilipeppr-luaeditor"<br><br>The DOM ID of the element that should be the Ace Editor |
-| aceSessionName | object |  |
-| aceSessions | object |  |
-| aceCurrentSession | object |  |
-| aceIsLoaded | boolean |  |
-| loadAce | function | function (sessionName)  |
-| fileNewCtr | number |  |
-| fileNew | function | function (evt)  |
-| createFileTab | function | function (id, filename)  |
-| onFileTabShow | function | function (e)  |
-| onFileTabClose | function | function (e)  |
-| renameFileNeedSaveAfter | boolean |  |
-| renameFileShow | function | function (evt)  |
-| renameFileHide | function | function (evt)  |
-| renameFile | function | function ()  |
-| getActiveFile | function | function ()  |
-| fileLocalSave | function | function (evt)  |
-| refreshFileList | function | function () <br><br>Update the file pulldown to show the new files in localStorage. |
-| fileLocalOpen | function | function (fi)  |
-| fileUploadAndRun | function | function (evt)  |
-| fileUpload | function | function (evt)  |
-| rawUploadAndRun | function | function (txt, filename)  |
-| fileDump | function | function (evt)  |
-| fileDelete | function | function (evt)  |
-| fileRun | function | function (evt)  |
-| cleanupFilename | function | function ()  |
-| setupUploadRun | function | function () <br><br>Setup the Upload -> Run button |
-| onOpenUploadRunRegion | function | function (evt)  |
-| onCloseUploadRunRegion | function | function ()  |
-| flashMsg | function | function (title, msg)  |
-| setupStartup | function | function ()  |
-| editStartup | function | function (evt)  |
-| saveStartup | function | function (evt)  |
-| makeTextareaAcceptTabs | function | function ()  |
-| sendCtr | number | Keep a counter so each send has its own ID so we can use jsonSendand get complete statuses back from SPJS when we send each lineto the serial port. |
-| send | function | function (txt) <br><br>Send the script off to the serial port. |
-| getScript | function | function ()  |
-| runScript | function | function (macroStr, helpTxt)  |
-| jscriptKeypress | function | function (evt)  |
-| saveTemporaryFile | function | function (evt)  |
-| getTemporaryFile | function | function ()  |
-| setScriptFromTemporaryFile | function | function ()  |
-| showData | function | function (datatxt)  |
-| saveScript | function | function ()  |
-| deleteRecentFiles | function | function ()  |
-| createRecentFileEntry | function | function (fileStr, info)  |
-| buildRecentFileMenu | function | function ()  |
-| loadFileFromLocalStorageKey | function | function (key)  |
-| resizeEditor | function | function ()  |
-| resize | function | function () <br><br>Resize the widget to the height of the window |
-| loadJscript | function | function (txt)  |
-| setupSamples | function | function ()  |
-| getMethodString | function | function (methodToGet)  |
-| autoAddMacros | object |  |
-| generateZigZag | function | function () <br><br>This macro helps you generate a zig zag toolpath inside of an overall rectangular shape. Give it the width and height of the rectangularshape. Then give it the step over value and it will generate the gcode and then send it to the workspace so you can visualize it and run it.<br><br>This can be used to mill out or pocket a workpiece. It can also be used to scan a laserover a surface to ablate or cure materialby scanning back and forth with a step over. |
-| sendSerial | function | function (gcode)  |
-| statEl | object |  |
-| status | function | function (txt)  |
-| forkSetup | function | function () <br><br>Add the fork menu to upper right corner caret. |
+  <table id="com-chilipeppr-elem-methodsprops" class="table table-bordered table-striped">
+      <thead>
+          <tr>
+              <th style="">Method / Property</th>
+              <th>Type</th>
+              <th style="">Description</th>
+          </tr>
+      </thead>
+      <tbody>
+      <tr valign="top"><td>id</td><td>string</td><td>"com-chilipeppr-widget-luaeditor"<br><br>The ID of the widget. You must define this and make it unique.</td></tr><tr valign="top"><td>name</td><td>string</td><td>"Widget / Lua Editor"</td></tr><tr valign="top"><td>desc</td><td>string</td><td>"Edit and run Lua code with a multi-file editor. Save locally or upload/run remotely on the Lua device."</td></tr><tr valign="top"><td>url</td><td>string</td><td>"http://raw.githubusercontent.com/chilipeppr/widget-luaeditor/master/auto-generated-widget.html"</td></tr><tr valign="top"><td>fiddleurl</td><td>string</td><td>"http://ide.c9.io/chilipeppr/widget-luaeditor"</td></tr><tr valign="top"><td>githuburl</td><td>string</td><td>"http://github.com/chilipeppr/widget-luaeditor"</td></tr><tr valign="top"><td>testurl</td><td>string</td><td>"http://widget-luaeditor-chilipeppr.c9users.io/widget.html"</td></tr><tr valign="top"><td>publish</td><td>object</td><td>Please see docs above.<br><br>Define the publish signals that this widget/element owns or defines so that
+other widgets know how to subscribe to them and what they do.</td></tr><tr valign="top"><td>subscribe</td><td>object</td><td>Please see docs above.<br><br>Define the subscribe signals that this widget/element owns or defines so that
+other widgets know how to subscribe to them and what they do.</td></tr><tr valign="top"><td>foreignPublish</td><td>object</td><td>Please see docs above.<br><br>Document the foreign publish signals, i.e. signals owned by other widgets
+or elements, that this widget/element publishes to.</td></tr><tr valign="top"><td>foreignSubscribe</td><td>object</td><td>Please see docs above.<br><br>Document the foreign subscribe signals, i.e. signals owned by other widgets
+or elements, that this widget/element subscribes to.</td></tr><tr valign="top"><td>jscript</td><td>object</td><td></td></tr><tr valign="top"><td>editor</td><td>object</td><td></td></tr><tr valign="top"><td>init</td><td>function</td><td>function () </td></tr><tr valign="top"><td>setupSubscribe</td><td>function</td><td>function () <br><br>Setup subscribe so others can publish to us and ask us to
+open a file, i.e. the NodeMCU Files widget sends this to us.</td></tr><tr valign="top"><td>loadScript</td><td>function</td><td>function (data) <br><br>The method that receives the /loadScript publishes</td></tr><tr valign="top"><td>loadPrevFiles</td><td>function</td><td>function () </td></tr><tr valign="top"><td>getDeviceFileList</td><td>function</td><td>function () </td></tr><tr valign="top"><td>aceId</td><td>string</td><td>"com-chilipeppr-luaeditor"<br><br>The DOM ID of the element that should be the Ace Editor</td></tr><tr valign="top"><td>aceSessionName</td><td>object</td><td></td></tr><tr valign="top"><td>aceSessions</td><td>object</td><td></td></tr><tr valign="top"><td>aceCurrentSession</td><td>object</td><td></td></tr><tr valign="top"><td>aceIsLoaded</td><td>boolean</td><td></td></tr><tr valign="top"><td>loadAce</td><td>function</td><td>function (sessionName) </td></tr><tr valign="top"><td>fileNewCtr</td><td>number</td><td></td></tr><tr valign="top"><td>fileNew</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>createFileTab</td><td>function</td><td>function (id, filename) </td></tr><tr valign="top"><td>onFileTabShow</td><td>function</td><td>function (e) </td></tr><tr valign="top"><td>onFileTabClose</td><td>function</td><td>function (e) </td></tr><tr valign="top"><td>renameFileNeedSaveAfter</td><td>boolean</td><td></td></tr><tr valign="top"><td>renameFileShow</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>renameFileHide</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>renameFile</td><td>function</td><td>function () </td></tr><tr valign="top"><td>getActiveFile</td><td>function</td><td>function () </td></tr><tr valign="top"><td>fileLocalSave</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>refreshFileList</td><td>function</td><td>function () <br><br>Update the file pulldown to show the new files in localStorage.</td></tr><tr valign="top"><td>fileLocalOpen</td><td>function</td><td>function (fi) </td></tr><tr valign="top"><td>fileUploadAndRun</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>fileUpload</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>rawUploadAndRun</td><td>function</td><td>function (txt, filename) </td></tr><tr valign="top"><td>fileDump</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>fileDelete</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>fileRun</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>cleanupFilename</td><td>function</td><td>function () </td></tr><tr valign="top"><td>setupUploadRun</td><td>function</td><td>function () <br><br>Setup the Upload -> Run button</td></tr><tr valign="top"><td>onOpenUploadRunRegion</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>onCloseUploadRunRegion</td><td>function</td><td>function () </td></tr><tr valign="top"><td>flashMsg</td><td>function</td><td>function (title, msg) </td></tr><tr valign="top"><td>setupStartup</td><td>function</td><td>function () </td></tr><tr valign="top"><td>editStartup</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>saveStartup</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>makeTextareaAcceptTabs</td><td>function</td><td>function () </td></tr><tr valign="top"><td>sendCtr</td><td>number</td><td>Keep a counter so each send has its own ID so we can use jsonSend
+and get complete statuses back from SPJS when we send each line
+to the serial port.</td></tr><tr valign="top"><td>send</td><td>function</td><td>function (txt) <br><br>Send the script off to the serial port.</td></tr><tr valign="top"><td>getScript</td><td>function</td><td>function () </td></tr><tr valign="top"><td>runScript</td><td>function</td><td>function (macroStr, helpTxt) </td></tr><tr valign="top"><td>jscriptKeypress</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>saveTemporaryFile</td><td>function</td><td>function (evt) </td></tr><tr valign="top"><td>getTemporaryFile</td><td>function</td><td>function () </td></tr><tr valign="top"><td>setScriptFromTemporaryFile</td><td>function</td><td>function () </td></tr><tr valign="top"><td>showData</td><td>function</td><td>function (datatxt) </td></tr><tr valign="top"><td>saveScript</td><td>function</td><td>function () </td></tr><tr valign="top"><td>deleteRecentFiles</td><td>function</td><td>function () </td></tr><tr valign="top"><td>createRecentFileEntry</td><td>function</td><td>function (fileStr, info) </td></tr><tr valign="top"><td>buildRecentFileMenu</td><td>function</td><td>function () </td></tr><tr valign="top"><td>loadFileFromLocalStorageKey</td><td>function</td><td>function (key) </td></tr><tr valign="top"><td>resizeEditor</td><td>function</td><td>function () </td></tr><tr valign="top"><td>resize</td><td>function</td><td>function () <br><br>Resize the widget to the height of the window</td></tr><tr valign="top"><td>loadJscript</td><td>function</td><td>function (txt) </td></tr><tr valign="top"><td>setupSamples</td><td>function</td><td>function () </td></tr><tr valign="top"><td>getMethodString</td><td>function</td><td>function (methodToGet) </td></tr><tr valign="top"><td>autoAddMacros</td><td>object</td><td></td></tr><tr valign="top"><td>generateZigZag</td><td>function</td><td>function () <br><br>This macro helps you generate a zig zag tool
+path inside of an overall rectangular shape. 
+Give it the width and height of the rectangular
+shape. Then give it the step over value and it 
+will generate the gcode and then send it to the 
+workspace so you can visualize it and run it.<br><br>This can be used to mill out or pocket a work
+piece. It can also be used to scan a laser
+over a surface to ablate or cure material
+by scanning back and forth with a step over.</td></tr><tr valign="top"><td>sendSerial</td><td>function</td><td>function (gcode) </td></tr><tr valign="top"><td>statEl</td><td>object</td><td></td></tr><tr valign="top"><td>status</td><td>function</td><td>function (txt) </td></tr><tr valign="top"><td>forkSetup</td><td>function</td><td>function () <br><br>Add the fork menu to upper right corner caret.</td></tr>
+      </tbody>
+  </table>
 
 
 ## About ChiliPeppr
@@ -196,6 +180,4 @@ ChiliPeppr's Serial Port JSON Server is the basis for the
 [Arduino's new web IDE](https://create.arduino.cc/). If the Arduino team is excited about building on top
 of ChiliPeppr, what
 will you build on top of it?
-
-
 
