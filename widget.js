@@ -528,6 +528,10 @@ l = nil
             this.resize();
         },
         renameFile: function() {
+            
+            // TODO
+            // we need to make sure they didn't pick a name in use on another tab
+            
             // when this is called from the go button we need
             // to change lots of id's
             var newfilename = $("#" + this.id + ' .devicefilename').val();
