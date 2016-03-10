@@ -854,6 +854,9 @@ l = nil
             
             filename += ".lua";
             
+            // cleanup text to remove \r\n
+            txt = txt.replace(/\r\n/g, "\n");
+            
             // split on newlines and upload per line
             this.send('file.open("' + filename + '", "w")');
             var txtArr = txt.split(/\n/g);
