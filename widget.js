@@ -80,7 +80,7 @@ cprequire_test(["inline:com-chilipeppr-widget-luaeditor"], function(myWidget) {
     var testLoadScript3 = function() {
         var file = {
             name: "differentfile.lua",
-            content: "print(\"hello world 3\")\nprint(\"cool 3\")\n"
+            content: "print(\"hello world 3\")\r\nprint(\"cool 3\")\r\n"
         }
         chilipeppr.publish("/com-chilipeppr-widget-luaeditor/loadScript", file);
     }
@@ -1029,7 +1029,7 @@ l = nil
             var that = this;
 
             for (var indx in cmds) {
-                //setTimeout(function() {
+                setTimeout(function() {
 
                 var cmd = cmds[ctr];
 
@@ -1040,7 +1040,7 @@ l = nil
 
                 ctr++;
 
-                //}, 10 * indx);
+                }, 10 * indx);
             }
         },
 
