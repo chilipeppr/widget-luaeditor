@@ -1047,7 +1047,7 @@ l = nil
                     ctr++;
                 }
 
-            }, 50);
+            }, 100);
             
             /*            
             for (var indx in cmds) {
