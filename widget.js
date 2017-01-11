@@ -1028,6 +1028,28 @@ l = nil
             var ctr = 0;
             var that = this;
 
+            
+            var intervalID = window.setInterval(function() {
+                
+                var cmd = cmds[ctr];
+
+                chilipeppr.publish("/com-chilipeppr-widget-serialport/jsonSend", {
+                    D: cmd + '\n',
+                    Id: "luaeditor-" + that.sendCtr++
+                });
+
+                if (ctr == cmds.length - 1) {
+                    // we are at end
+                    // decide when to end this interval
+                    clearInterval(intervalID);   
+                } else {
+                    // increment counter for next time in interval
+                    ctr++;
+                }
+
+            }, 50);
+            
+            /*            
             for (var indx in cmds) {
                 setTimeout(function() {
 
@@ -1042,6 +1064,7 @@ l = nil
 
                 }, 30 * indx);
             }
+            */
         },
 
         getScript: function() {
