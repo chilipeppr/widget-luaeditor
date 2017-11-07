@@ -1054,6 +1054,7 @@ l = nil
                     // keep going
                     console.log("we have more items on sendQueue. items:", that.sendQueue.length);
                 } else {
+                    console.log("no more items on queue. cancelling interval.");
                     clearInterval(that.sendIntervalId); 
                     that.sendIntervalId = null;
                 }
@@ -1068,7 +1069,7 @@ l = nil
                 }
                 */
 
-            }, 10);
+            }, 40);
             
             /*            
             for (var indx in cmds) {
