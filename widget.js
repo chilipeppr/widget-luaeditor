@@ -1068,7 +1068,7 @@ l = nil
                 }
                 */
 
-            }, 15);
+            }, 10);
             
             /*            
             for (var indx in cmds) {
