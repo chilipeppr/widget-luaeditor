@@ -91,9 +91,9 @@ cprequire_test(["inline:com-chilipeppr-widget-luaeditor"], function(myWidget) {
     $('title').html(myWidget.name);
     
     // test
-    setTimeout(testLoadScript, 2000);
-    setTimeout(testLoadScript3, 4000);
-    setTimeout(testLoadScript2, 6000);
+    setTimeout(testLoadScript, 200);
+    // setTimeout(testLoadScript3, 4000);
+    // setTimeout(testLoadScript2, 6000);
     
     //$('#' + myWidget.id + ' .alert-devicefilename').removeClass("hidden");
     //$('#' + myWidget.id + ' .luaeditor-uploadrun').trigger("click");
@@ -770,7 +770,7 @@ l = nil
             for(var i in txtArr) {
                 var line = txtArr[i];
                 //var lineEsc = line.replace(/"/g, '\\"');
-                this.send('file.writeline([[' + line + ']])')
+                this.send('file.writeline([[' + line + ']])');
             }
             this.send('file.close()');
             this.send('node.compile("' + filename + '")');
@@ -1021,24 +1021,42 @@ l = nil
          * to the serial port.
          */
         sendCtr: 0,
+        sendQueue: [],
+        sendIntervalId: null,
         /**
-         * Send the script off to the serial port.
+         * Send the script off to the serial port. Let's do this via a queue.
          */
         send: function(txt) {
             var cmds = txt.split(/\n/g);
             var ctr = 0;
             var that = this;
 
+            // push cmds onto queue
+            this.sendQueue = this.sendQueue.concat(cmds);
             
-            var intervalID = window.setInterval(function() {
+            // make sure we don't already have a start interval going
+            if (this.sendIntervalId) {
+                console.log("we already have an interval running, so don't start a new one");
+                return;
+            }
+            
+            // start the interval
+            this.sendIntervalId = window.setInterval(function() {
                 
-                var cmd = cmds[ctr];
+                var cmd = that.sendQueue.shift(); //cmds[ctr];
 
                 chilipeppr.publish("/com-chilipeppr-widget-serialport/jsonSend", {
                     D: cmd + '\n',
                     Id: "luaeditor-" + that.sendCtr++
                 });
 
+                if (that.sendQueue.length > 0) {
+                    // keep going
+                    console.log("we have more items on sendQueue. items:", that.sendQueue.length);
+                } else {
+                    clearInterval(that.sendIntervalId); 
+                }
+                /*
                 if (ctr == cmds.length - 1) {
                     // we are at end
                     // decide when to end this interval
@@ -1047,8 +1065,9 @@ l = nil
                     // increment counter for next time in interval
                     ctr++;
                 }
+                */
 
-            }, 10);
+            }, 15);
             
             /*            
             for (var indx in cmds) {
