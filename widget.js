@@ -770,6 +770,18 @@ l = nil
             for(var i in txtArr) {
                 var line = txtArr[i];
                 //var lineEsc = line.replace(/"/g, '\\"');
+                
+                // since we are using [[ and ]] for literal strings, we need to watch out a bit
+                // so if the line starts or ends with those add spaces
+                if (line.match(/^\[/)) {
+                    console.log("got line starting with [ so adding space. line:", line);
+                    line = " " + line;
+                }
+                if (line.match(/\]$/)) {
+                    console.log("got line ending with ] so adding space. line:", line);
+                    line = line + " ";
+                }
+                
                 this.send('file.writeline([[' + line + ']])');
             }
             this.send('file.close()');

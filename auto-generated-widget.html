@@ -864,6 +864,18 @@ l = nil
             for(var i in txtArr) {
                 var line = txtArr[i];
                 //var lineEsc = line.replace(/"/g, '\\"');
+                
+                // since we are using [[ and ]] for literal strings, we need to watch out a bit
+                // so if the line starts or ends with those add spaces
+                if (line.match(/^\[/)) {
+                    console.log("got line starting with [ so adding space. line:", line);
+                    line = " " + line;
+                }
+                if (line.match(/\]$/)) {
+                    console.log("got line ending with ] so adding space. line:", line);
+                    line = line + " ";
+                }
+                
                 this.send('file.writeline([[' + line + ']])');
             }
             this.send('file.close()');
@@ -1557,7 +1569,7 @@ l = nil
             <div class="btn-toolbar xpull-right" role="toolbar" style="margin-right:6px;">
 
             <div class="panel-title pull-left" data-toggle="popover" 
-            data-original-title="" title="" style="padding-right:10px">Lua&nbsp;Editor <span style="font-size:8px;">v4</span></div>
+            data-original-title="" title="" style="padding-right:10px">Lua&nbsp;Editor <span style="font-size:8px;">v5</span></div>
 
 
                 <div class="btn-group pull-right" style="margin-right:0;">
