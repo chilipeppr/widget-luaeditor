@@ -1149,6 +1149,7 @@ l = nil
                     console.log("we have more items on sendQueue. items:", that.sendQueue.length);
                 } else {
                     clearInterval(that.sendIntervalId); 
+                    that.sendIntervalId = null;
                 }
                 /*
                 if (ctr == cmds.length - 1) {
@@ -1555,7 +1556,7 @@ l = nil
             <div class="btn-toolbar xpull-right" role="toolbar" style="margin-right:6px;">
 
             <div class="panel-title pull-left" data-toggle="popover" 
-            data-original-title="" title="" style="padding-right:10px">Lua&nbsp;Editor <span style="font-size:8px;">v2</span></div>
+            data-original-title="" title="" style="padding-right:10px">Lua&nbsp;Editor <span style="font-size:8px;">v3</span></div>
 
 
                 <div class="btn-group pull-right" style="margin-right:0;">

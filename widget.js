@@ -1055,6 +1055,7 @@ l = nil
                     console.log("we have more items on sendQueue. items:", that.sendQueue.length);
                 } else {
                     clearInterval(that.sendIntervalId); 
+                    that.sendIntervalId = null;
                 }
                 /*
                 if (ctr == cmds.length - 1) {
