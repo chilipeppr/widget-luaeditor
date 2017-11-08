@@ -1081,7 +1081,7 @@ l = nil
                 }
                 */
 
-            }, 10);
+            }, 2);
             
             /*            
             for (var indx in cmds) {
