@@ -192,16 +192,33 @@
             
             <div class="alert-dismissible alert alert-devicefilename" role="alert" 
             style="padding:8px 0 0 0; margin:0 0 0 -4px;">
-                <button type="button" class="close hidden" data-dismiss="alert" aria-label="Close" style="padding-left:10px">
+                <button type="button" class="close hidden" data-dismiss="alert" aria-label="Close" 
+                style="padding-left:10px">
                     <span aria-hidden="true">&times;</span>
                 </button>
+                <div class="btn-group btn-group-xs pull-right" style="margin-right:0;">
+                    <button class="btn btn-default btn-fileuploadall" type="button"
+                    data-container="body" data-toggle="popover" data-placement="auto" 
+                    data-content="Upload and compile all files open as tabs in editor." data-trigger="hover"
+                    data-delay="1000" data-original-title="" title="">
+                        Upload All 
+                        <span class="glyphicon glyphicon-floppy-open"></span>
+                        <span class="glyphicon glyphicon-floppy-open"></span>
+                    </button>
+                </div>
                 <div class="btn-group btn-group-xs">
-                    <button class="btn btn-default btn-fileuploadrun" type="button">
+                    <button class="btn btn-default btn-fileuploadrun" type="button"
+                    data-container="body" data-toggle="popover" data-placement="auto" 
+                    data-content="Upload the file, compile it, then run it. Alt+R is shortcut key." data-trigger="hover"
+                    data-delay="1000" data-original-title="" title="">
                         Upload > Run 
                         <span class="glyphicon glyphicon-floppy-open"></span><span 
                         class="glyphicon glyphicon-play">
                     </button>
-                    <button class="btn btn-default btn-fileupload" type="button">
+                    <button class="btn btn-default btn-fileupload" type="button"
+                    data-container="body" data-toggle="popover" data-placement="auto" 
+                    data-content="Upload the file and just compile it. Alt+U is shortcut key." data-trigger="hover"
+                    data-delay="1000" data-original-title="" title="">
                         Upload 
                         <span class="glyphicon glyphicon-floppy-open"></span>
                     </button>
@@ -228,6 +245,9 @@
                     <!--    Download -->
                     <!--    <span class="glyphicon glyphicon-floppy-save"></span>-->
                     <!--</button>-->
+                    
+                    
+                    
                 </div>
                 <div tabindex="0" class="devicefilename-region well hidden">
                     <p style="padding-top:10px;">Give your file a name. The name will be used on the ESP8266 device as well 

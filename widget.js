@@ -175,6 +175,8 @@ cpdefine("inline:com-chilipeppr-widget-luaeditor", ["chilipeppr_ready", "aceAuto
             // capture ctrl+enter on textarea
             $('#' + this.id + ' .luaeditor-maineditor').keypress(this.jscriptKeypress.bind(this));
             
+            // capture alt+r and alt+u on textarea
+            $('#' + this.id + ' .luaeditor-maineditor').keydown(this.jscriptKeydown.bind(this));
             
             // setup subscribe methods so others can publish to us and ask us to
             // open a file
@@ -739,6 +741,10 @@ l = nil
             
             this.resize();
         },
+        fileUploadAll: function(evt) {
+            console.log("fileUploadAll. evt:", evt);
+            
+        },
         fileUploadAndRun: function(evt) {
             this.fileUpload();
             this.fileRun();
@@ -900,6 +906,7 @@ l = nil
             boxEl.on('change', this.cleanupFilename.bind(this));
             
             // setup individual buttons
+            $('#' + this.id + ' .btn-fileuploadall').click(this.fileUploadAll.bind(this));
             $('#' + this.id + ' .btn-fileuploadrun').click(this.fileUploadAndRun.bind(this));
             $('#' + this.id + ' .btn-fileupload').click(this.fileUpload.bind(this));
             $('#' + this.id + ' .btn-filerun').click(this.fileRun.bind(this));
@@ -1135,7 +1142,9 @@ l = nil
             }
         },
         jscriptKeypress: function(evt) {
-            //console.log("got keypress textarea. evt:", evt);
+            // console.log("got keypress textarea. evt.keyCode", evt.keyCode, "evt:", evt);
+            
+            // shortcut for ctrl+enter
             if (evt.ctrlKey && evt.keyCode == 10) {
                 // run the macro
                 //$('.com-chilipeppr-widget-macro-run').click();
@@ -1147,9 +1156,35 @@ l = nil
                     $('#' + that.id + ' .luaeditor-run').removeClass('active');
                 }, 200);
             }
+            
+            // if (evt.ctrlKey && evt.keyCode)
+            
             // should we really do this on every keystroke
             this.saveTemporaryFile();
                 
+        },
+        jscriptKeydown: function(evt) {
+            console.log("got keydown textarea. evt.keyCode", evt.keyCode, "evt:", evt);
+            
+            if (evt.altKey && evt.keyCode == 82) {
+                this.fileUploadAndRun();
+                // mimic push on btn
+                $('#' + this.id + ' .btn-fileuploadrun').addClass('active');
+                var that = this;
+                setTimeout(function() {
+                    $('#' + that.id + ' .btn-fileuploadrun').removeClass('active');
+                }, 200);
+            }
+            
+            if (evt.altKey && evt.keyCode == 85) {
+                this.fileUpload();
+                // mimic push on btn
+                $('#' + this.id + ' .btn-fileupload').addClass('active');
+                var that = this;
+                setTimeout(function() {
+                    $('#' + that.id + ' .btn-fileupload').removeClass('active');
+                }, 200);
+            }
         },
         saveTemporaryFile: function(evt) {
             localStorage.setItem(this.id + "-tempfile", this.getScript()); 
