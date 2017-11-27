@@ -167,7 +167,7 @@ cprequire_test(["inline:com-chilipeppr-widget-luaeditor"], function(myWidget) {
     }
     var testLoadScript2 = function() {
         var file = {
-            name: "myfile.lua",
+            name: "myfile2.lua",
             content: "print(\"hello world 2\")\nprint(\"cool 2\")\n"
         }
         chilipeppr.publish("/com-chilipeppr-widget-luaeditor/loadScript", file);
@@ -186,8 +186,8 @@ cprequire_test(["inline:com-chilipeppr-widget-luaeditor"], function(myWidget) {
     
     // test
     setTimeout(testLoadScript, 200);
-    // setTimeout(testLoadScript3, 4000);
-    // setTimeout(testLoadScript2, 6000);
+    setTimeout(testLoadScript3, 400);
+    setTimeout(testLoadScript2, 600);
     
     //$('#' + myWidget.id + ' .alert-devicefilename').removeClass("hidden");
     //$('#' + myWidget.id + ' .luaeditor-uploadrun').trigger("click");
@@ -838,6 +838,59 @@ l = nil
         fileUploadAll: function(evt) {
             console.log("fileUploadAll. evt:", evt);
             
+            console.log("this.aceSessions:", this.aceSessions);
+            
+            for (var key in this.aceSessions) {
+                var session = this.aceSessions[key];
+                var txt = session.getValue();
+                console.log("session:", session);
+                console.log("session.getValue()", txt)
+                
+                var filename = key.replace(/com-chilipeppr-widget-nodemcu-file-/, "");
+                console.log("filename:", filename);
+                
+                if (filename == null || filename.length <= 0) {
+                    // problem with filename
+                    this.flashMsg("No Filename", "You need to provide a filename to upload.");
+                } else {
+                    
+                    // good file name, continue on
+                    filename += ".lua";
+                    
+                    // cleanup text to remove \r\n
+                    txt = txt.replace(/\r\n/g, "\n");
+                    
+                    // split on newlines and upload per line
+                    var txtToUpload = "";
+                    
+                    txtToUpload += 'file.open("' + filename + '", "w")\n';
+                    var txtArr = txt.split(/\n/g);
+                    for(var i in txtArr) {
+                        var line = txtArr[i];
+                        //var lineEsc = line.replace(/"/g, '\\"');
+                        
+                        // since we are using [[ and ]] for literal strings, we need to watch out a bit
+                        // so if the line starts or ends with those add spaces
+                        if (line.match(/^\[/)) {
+                            console.log("got line starting with [ so adding space. line:", line);
+                            line = " " + line;
+                        }
+                        if (line.match(/\]$/)) {
+                            console.log("got line ending with ] so adding space. line:", line);
+                            line = line + " ";
+                        }
+                        
+                        txtToUpload += 'file.writeline([[' + line + ']])\n';
+                    }
+                    txtToUpload += 'file.close()\n';
+                    txtToUpload += 'node.compile("' + filename + '")\n';
+                    this.send(txtToUpload);
+                }
+            };
+            
+            // https://raw.githubusercontent.com/chilipeppr/widget-luaeditor/master/ding.ogg
+            var audio = new Audio('https://raw.githubusercontent.com/chilipeppr/widget-luaeditor/master/ding.ogg');
+            audio.play();
         },
         fileUploadAndRun: function(evt) {
             this.fileUpload();
@@ -1258,7 +1311,7 @@ l = nil
                 
         },
         jscriptKeydown: function(evt) {
-            console.log("got keydown textarea. evt.keyCode", evt.keyCode, "evt:", evt);
+            // console.log("got keydown textarea. evt.keyCode", evt.keyCode, "evt:", evt);
             
             if (evt.altKey && evt.keyCode == 82) {
                 this.fileUploadAndRun();
