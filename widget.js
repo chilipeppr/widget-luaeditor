@@ -790,13 +790,16 @@ l = nil
                     }
                     txtToUpload += 'file.close()\n';
                     txtToUpload += 'node.compile("' + filename + '")\n';
-                    this.send(txtToUpload);
+                    this.send(txtToUpload, function() {
+                        console.log("got done on sending queue");
+                        // https://raw.githubusercontent.com/chilipeppr/widget-luaeditor/master/ding.ogg
+                        var audio = new Audio('https://raw.githubusercontent.com/chilipeppr/widget-luaeditor/master/ding.ogg');
+                        audio.play();
+                    });
                 }
             };
             
-            // https://raw.githubusercontent.com/chilipeppr/widget-luaeditor/master/ding.ogg
-            var audio = new Audio('https://raw.githubusercontent.com/chilipeppr/widget-luaeditor/master/ding.ogg');
-            audio.play();
+            
         },
         fileUploadAndRun: function(evt) {
             this.fileUpload();
@@ -1098,7 +1101,7 @@ l = nil
         /**
          * Send the script off to the serial port. Let's do this via a queue.
          */
-        send: function(txt) {
+        send: function(txt, callbackOnDone) {
             var cmds = txt.split(/\n/g);
             var ctr = 0;
             var that = this;
@@ -1129,6 +1132,8 @@ l = nil
                     console.log("no more items on queue. cancelling interval.");
                     clearInterval(that.sendIntervalId); 
                     that.sendIntervalId = null;
+                    
+                    if (callbackOnDone) callbackOnDone();
                 }
                 /*
                 if (ctr == cmds.length - 1) {
