@@ -1101,10 +1101,21 @@ l = nil
         /**
          * Send the script off to the serial port. Let's do this via a queue.
          */
-        send: function(txt, callbackOnDone) {
+        send: function(txt, callbackOnDone, isAsBulk) {
             var cmds = txt.split(/\n/g);
             var ctr = 0;
             var that = this;
+            
+            // see if we have more than 1,000 lines. if so do a full spjs upload.
+            if (isAsBulk) {
+                // alert("You have " + cmds.length + " lines to upload. We will send all to SPJS.");
+                this.status("Will run as bulk upload. Look in SPJS queue to see progress.");
+                chilipeppr.publish("/com-chilipeppr-widget-serialport/jsonSend", {
+                    D: txt + '\n',
+                    Id: "bulk-" + that.sendCtr++
+                });
+                return;
+            }
 
             // push cmds onto queue
             this.sendQueue = this.sendQueue.concat(cmds);
@@ -1173,6 +1184,18 @@ l = nil
         },
         runScript: function(macroStr, helpTxt) {
             
+            console.log("runScript. evt:", macroStr);
+            
+            // the evt is called macroStr for historical reasons
+            var isBulkUpload = false;
+            if ('ctrlKey' in macroStr) {
+                // we have an event
+                if (macroStr.ctrlKey) {
+                    // they had ctrl key down, try bulk upload
+                    isBulkUpload = true;
+                }
+            }
+            
             // hide popover
             $('#' + this.id + ' .luaeditor-run').popover('hide');
             
@@ -1187,7 +1210,7 @@ l = nil
             
             if (this.jscript && this.jscript.length > 1) {
             
-                this.send(this.jscript);
+                this.send(this.jscript, null, isBulkUpload);
                 
                 if (!helpTxt) helpTxt = "";
                 helpTxt = helpTxt.trim();

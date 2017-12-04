@@ -1195,10 +1195,21 @@ l = nil
         /**
          * Send the script off to the serial port. Let's do this via a queue.
          */
-        send: function(txt, callbackOnDone) {
+        send: function(txt, callbackOnDone, isAsBulk) {
             var cmds = txt.split(/\n/g);
             var ctr = 0;
             var that = this;
+            
+            // see if we have more than 1,000 lines. if so do a full spjs upload.
+            if (isAsBulk) {
+                // alert("You have " + cmds.length + " lines to upload. We will send all to SPJS.");
+                this.status("Will run as bulk upload. Look in SPJS queue to see progress.");
+                chilipeppr.publish("/com-chilipeppr-widget-serialport/jsonSend", {
+                    D: txt + '\n',
+                    Id: "bulk-" + that.sendCtr++
+                });
+                return;
+            }
 
             // push cmds onto queue
             this.sendQueue = this.sendQueue.concat(cmds);
@@ -1267,6 +1278,18 @@ l = nil
         },
         runScript: function(macroStr, helpTxt) {
             
+            console.log("runScript. evt:", macroStr);
+            
+            // the evt is called macroStr for historical reasons
+            var isBulkUpload = false;
+            if ('ctrlKey' in macroStr) {
+                // we have an event
+                if (macroStr.ctrlKey) {
+                    // they had ctrl key down, try bulk upload
+                    isBulkUpload = true;
+                }
+            }
+            
             // hide popover
             $('#' + this.id + ' .luaeditor-run').popover('hide');
             
@@ -1281,7 +1304,7 @@ l = nil
             
             if (this.jscript && this.jscript.length > 1) {
             
-                this.send(this.jscript);
+                this.send(this.jscript, null, isBulkUpload);
                 
                 if (!helpTxt) helpTxt = "";
                 helpTxt = helpTxt.trim();
@@ -1662,7 +1685,8 @@ l = nil
             <div class="btn-toolbar xpull-right" role="toolbar" style="margin-right:6px;">
 
             <div class="panel-title pull-left" data-toggle="popover" 
-            data-original-title="" title="" style="padding-right:10px">Lua&nbsp;Editor <span style="font-size:8px;">v3</span></div>
+            data-original-title="" title="" style="padding-right:10px">Lua&nbsp;Editor 
+            <span style="font-size:8px;">v4</span></div>
 
 
                 <div class="btn-group pull-right" style="margin-right:0;">
@@ -1685,7 +1709,7 @@ l = nil
     
                 <div class="btn-group xpull-right" xstyle="margin-right:6px;">
                     <button type="button" id="" class="btn btn-xs btn-default luaeditor-run" 
-                    data-container="body" data-toggle="popover" data-placement="auto" data-content="Run the script. Ctrl+Enter is the shortcut which is quite handy." data-trigger="hover"
+                    data-container="body" data-toggle="popover" data-placement="auto" data-content="Run the script. Ctrl+Enter is the shortcut you can press when inside the editor, which is quite handy. You can also do a bulk send by holding down Ctrl key when hitting this Run button. It uploads all lines to SPJS first, which could take awhile, but you can then watch the SPJS queue count down as your devices processes the lines." data-trigger="hover"
                     data-delay="1000" data-original-title="" title=""> Run <span class="glyphicon glyphicon-play"></span>
                     </button>
                 </div>
