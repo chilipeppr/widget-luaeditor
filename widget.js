@@ -1113,7 +1113,7 @@ l = nil
                 //[{"D": "G0 X1 ", "Id":"123"}, {"D": "G0 X2 ", "Id":"124"}]
                 var sendArr = [];
                 for (var i = 0; i < cmds.length; i++) {
-                    var sendItem = {D:cmds[i], Id: "bulk" + that.sendCtr++};
+                    var sendItem = {D:cmds[i] + "\n", Id: "bulk" + that.sendCtr++};
                     sendArr.push(sendItem);
                 }
                 chilipeppr.publish("/com-chilipeppr-widget-serialport/jsonSend", sendArr);
@@ -1191,7 +1191,7 @@ l = nil
             
             // the evt is called macroStr for historical reasons
             var isBulkUpload = false;
-            if ('ctrlKey' in macroStr) {
+            if (macroStr && 'ctrlKey' in macroStr) {
                 // we have an event
                 if (macroStr.ctrlKey) {
                     // they had ctrl key down, try bulk upload
