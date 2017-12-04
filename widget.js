@@ -1110,7 +1110,13 @@ l = nil
             if (isAsBulk) {
                 // alert("You have " + cmds.length + " lines to upload. We will send all to SPJS.");
                 this.status("Will run as bulk upload. Look in SPJS queue to see progress.");
-                chilipeppr.publish("/com-chilipeppr-widget-serialport/send", txt + "\n");
+                //[{"D": "G0 X1 ", "Id":"123"}, {"D": "G0 X2 ", "Id":"124"}]
+                var sendArr = [];
+                for (var i = 0; i < cmds.length; i++) {
+                    var sendItem = {D:cmds[i], Id: that.sendCtr++};
+                    sendArr.push(sendItem);
+                }
+                chilipeppr.publish("/com-chilipeppr-widget-serialport/jsonSend", sendArr);
                 return;
             }
 
