@@ -1204,10 +1204,7 @@ l = nil
             if (isAsBulk) {
                 // alert("You have " + cmds.length + " lines to upload. We will send all to SPJS.");
                 this.status("Will run as bulk upload. Look in SPJS queue to see progress.");
-                chilipeppr.publish("/com-chilipeppr-widget-serialport/jsonSend", {
-                    D: txt + '\n',
-                    Id: "bulk-" + that.sendCtr++
-                });
+                chilipeppr.publish("/com-chilipeppr-widget-serialport/send", txt + "\n");
                 return;
             }
 
@@ -1686,7 +1683,7 @@ l = nil
 
             <div class="panel-title pull-left" data-toggle="popover" 
             data-original-title="" title="" style="padding-right:10px">Lua&nbsp;Editor 
-            <span style="font-size:8px;">v4</span></div>
+            <span style="font-size:8px;">v5</span></div>
 
 
                 <div class="btn-group pull-right" style="margin-right:0;">
