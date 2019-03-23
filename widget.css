@@ -72,3 +72,12 @@
 .luaeditor-maineditor.empty {
     opacity: 0;
 }
+
+.dirtyflag.isdirty {
+    color: #aa0000;
+    display: inline;
+}
+.dirtyflag {
+    font-size:8px;
+    display: none;
+}

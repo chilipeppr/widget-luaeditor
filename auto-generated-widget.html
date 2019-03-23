@@ -88,6 +88,15 @@
 .luaeditor-maineditor.empty {
     opacity: 0;
 }
+
+.dirtyflag.isdirty {
+    color: #aa0000;
+    display: inline;
+}
+.dirtyflag {
+    font-size:8px;
+    display: none;
+}
     </style>
 
     <script type='text/javascript'>
@@ -413,12 +422,15 @@ l = nil
         aceSessions: {},
         aceCurrentSession: null,
         aceIsLoaded: false,
+        aceIsClean: true, // tracks isDirty so we know we have to save, can alert user, etc.
         loadAce: function(sessionName) {
 
             //if (id && id.length > 0) this.aceId = id;
             if (sessionName && sessionName.length > 0) {
                 this.aceSessionName = sessionName;
             }
+            
+            var that = this;
             
             console.log("trying to get ace. ace:"); //, ace, " aceId:", this.aceId);
             //require("ace/mode/text_highlight_rules", function(xace) {
@@ -452,6 +464,13 @@ l = nil
                     editor.on("changeSession", function(e) {
                         console.log("got editor changeSession");
                     });
+                    
+                    // attach to input event so we can keep track of dirty flag
+                    editor.on("input", this.onAceInputForDirtyChecking.bind(this));
+                    
+                    // attach to windowunload event so we can avoid moving away
+                    // without saved changes
+                    $(window).on('beforeunload', this.onWindowBeforeUnload.bind(this));
                     
                     this.resize();
                     this.aceIsLoaded = true;
@@ -500,6 +519,71 @@ l = nil
             
          
         },
+        onAceInputForDirtyChecking: function() {
+            console.log("onAceInputForDirtyChecking. got input")
+            // input is async event, which fires after any change events
+            var isClean = this.editor.session.getUndoManager().isClean();
+            // do something ...
+            console.log("isClean:", isClean);
+            this.aceIsClean = isClean;
+            
+            // add indicator to current session tab name so they know it's dirty
+            console.log("aceSessionName:", this.aceSessionName, "aceCurrentSession", this.aceCurrentSession);
+            
+            this.dirtyFlagAdd(this.aceSessionName);
+            
+            
+        },
+        dirtyFlagAdd: function(id) {
+            console.log("dirtyFlagAdd. id:", id);
+            var elTab = $("#" + id + "-tab");
+            console.log("elTab:", elTab);
+            var elFlag = elTab.find(".dirtyflag");
+            console.log("elFlag", elFlag);
+            elFlag.addClass("isdirty");
+        },
+        dirtyFlagRemove: function(id) {
+            console.log("dirtyFlagRemove. id:", id);
+            var elTab = $("#" + id + "-tab");
+            console.log("elTab:", elTab);
+            var elFlag = elTab.find(".dirtyflag");
+            console.log("elFlag", elFlag);
+            elFlag.removeClass("isdirty");
+            
+            // and set undoManager to 
+            // markClean()
+            this.aceSessions[id].getUndoManager().markClean();
+            // this.editor.session.getUndoManager().markClean();
+        },
+        isAnyEditorDirty: function() {
+            // loop thru editors and see if any flags are dirty
+            console.log("isAnyEditorDirty")
+            var isAnyDirty = false;
+            for (var key in this.aceSessions) {
+                console.log("key:", key, "aceSession:", this.aceSessions[key], "isClean():", this.aceSessions[key].getUndoManager().isClean());
+                if (this.aceSessions[key].getUndoManager().isClean()) {
+                    // all clean
+                } else {
+                    isAnyDirty = true;
+                }
+            }
+            return isAnyDirty;
+        },
+        onWindowBeforeUnload: function (e) {
+            console.log("got onWindowBeforeUnload. e:", e);
+            if (!this.isAnyEditorDirty()) {
+                // ace is clean, so allow unloading
+                console.log("ace is ok. go ahead and unload.");
+                return undefined;
+            }
+            
+            console.log("ace is dirty. so block unloading.");
+            var confirmationMessage = 'It looks like you have been editing something. '
+                                    + 'If you leave before saving, your changes will be lost.';
+    
+            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+        },
         
         fileNewCtr: 0,
         fileNew: function(evt) {
@@ -525,9 +609,9 @@ l = nil
             var tabEl = $('#' + this.id + ' .panel-body .nav-tabs');
             //var tmpltEl = tabEl.find('.li-template').clone();
             var tmpltEl = $(`
-<li class="active li-template"><a 
+<li class="active li-template"><a id="" class=""
     href="#com-chilipeppr-widget-tab-nodemcu-firmware" role="tab" 
-    data-toggle="tab"><span 
+    data-toggle="tab"><span class="dirtyflag glyphicon glyphicon-asterisk"></span><span 
     class="tab-file-name">udp.lua</span></a><button 
     type="button" class="close" 
     data-dismiss="alert" aria-label="Close"><span 
@@ -539,6 +623,7 @@ l = nil
             filename = filename.replace(/\.lua$/, "");
             tmpltEl.find(".tab-file-name").text(filename + ".lua");
             tmpltEl.find("a").prop('href', '#' + id); //.addClass(id);
+            tmpltEl.find("a").prop('id', '' + id + "-tab");
             //tmpltEl.find("a").attr("data-fileid", id);
             
             tabEl.append(tmpltEl);
@@ -757,6 +842,9 @@ l = nil
             
             //this.createRecentFileEntry(fileStr, info);
             this.status('Locally saved your file "' + activeFile.filename + '". Retrieve it from upper right pulldown.');
+
+            // now we need to handle the dirty flag
+            this.dirtyFlagRemove(activeFile.id);
 
             this.refreshFileList();
         },
