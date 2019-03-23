@@ -525,7 +525,7 @@ l = nil
             var isClean = this.editor.session.getUndoManager().isClean();
             // do something ...
             console.log("isClean:", isClean);
-            this.aceIsClean = isClean;
+            // this.aceIsClean = isClean;
             
             // get active file
             var activeFile = this.getActiveFile();
@@ -533,7 +533,13 @@ l = nil
             // add indicator to current session tab name so they know it's dirty
             console.log("activeFile:", activeFile, "aceCurrentSession", this.aceCurrentSession);
             
-            this.dirtyFlagAdd(activeFile.id);
+            // because an undo could have triggered this, which made us clean again
+            // we could undo the dirty flag then, so check that
+            if (isClean) {
+                this.dirtyFlagRemove(activeFile.id);
+            } else {
+                this.dirtyFlagAdd(activeFile.id);
+            }
             
             
         },
