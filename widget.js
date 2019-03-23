@@ -359,7 +359,7 @@ l = nil
                     });
                     
                     editor.on("changeSession", function(e) {
-                        console.log("got editor changeSession");
+                        console.log("got editor changeSession. e:", e, "e.session.name:", e.session.name);
                     });
                     
                     // attach to input event so we can keep track of dirty flag
@@ -424,10 +424,13 @@ l = nil
             console.log("isClean:", isClean);
             this.aceIsClean = isClean;
             
-            // add indicator to current session tab name so they know it's dirty
-            console.log("aceSessionName:", this.aceSessionName, "aceCurrentSession", this.aceCurrentSession);
+            // get active file
+            var activeFile = this.getActiveFile();
             
-            this.dirtyFlagAdd(this.aceSessionName);
+            // add indicator to current session tab name so they know it's dirty
+            console.log("activeFile:", activeFile, "aceCurrentSession", this.aceCurrentSession);
+            
+            this.dirtyFlagAdd(activeFile.id);
             
             
         },
@@ -632,6 +635,7 @@ l = nil
             //tabAEl.data('fileidold', af.id);
             tabAEl.attr('data-fileid', newid);
             tabAEl.attr("href", '#' + newid);
+            tabAEl.prop("id", newid + "-tab");
 
             // change key name in this.aceSessions
             this.aceSessions[newid] = this.aceSessions[af.id];
